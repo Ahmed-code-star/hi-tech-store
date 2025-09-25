@@ -1084,9 +1084,15 @@ const SalesDashboard = ({ onLogout, onNavigate, products, pendingPayments, onApp
   );
 };
 
-const ProductManagement = ({ products, onNavigate, onEditProduct }) => (
+const ProductManagement = ({ products, onNavigate, onEditProduct, onDeleteProduct, onAddProduct }) => (
     <div className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 min-h-screen text-right">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">إدارة المنتجات</h1>
+        <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-800">إدارة المنتجات</h1>
+            <button onClick={() => onNavigate('addProduct')} className="flex items-center gap-2 bg-green-500 text-white py-2 px-4 rounded-full font-semibold hover:bg-green-600 transition-colors">
+                <Plus size={20} />
+                <span>إضافة منتج جديد</span>
+            </button>
+        </div>
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-x-auto">
             <table className="min-w-full text-right table-auto">
                 <thead>
@@ -1103,10 +1109,14 @@ const ProductManagement = ({ products, onNavigate, onEditProduct }) => (
                             <td className="py-3 px-4 font-medium">{product.name_ar}</td>
                             <td className="py-3 px-4">${product.price.toFixed(2)}</td>
                             <td className="py-3 px-4">{product.rating.toFixed(1)}</td>
-                            <td className="py-3 px-4">
-                                <button onClick={() => onEditProduct(product.id)} className="flex items-center gap-1 text-slate-700 hover:text-slate-900 transition-colors">
+                            <td className="py-3 px-4 flex items-center gap-2">
+                                <button onClick={() => onEditProduct(product.id)} className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors">
                                     <Edit size={16} />
                                     <span>تعديل</span>
+                                </button>
+                                <button onClick={() => onDeleteProduct(product.id)} className="flex items-center gap-1 text-red-600 hover:text-red-800 transition-colors">
+                                    <Trash2 size={16} />
+                                    <span>حذف</span>
                                 </button>
                             </td>
                         </tr>
@@ -1117,36 +1127,156 @@ const ProductManagement = ({ products, onNavigate, onEditProduct }) => (
     </div>
 );
 
-const CategoryManagement = ({ categories, onNavigate, onEditCategory }) => (
-    <div className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 min-h-screen text-right">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">إدارة الفئات</h1>
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-x-auto">
-            <table className="min-w-full text-right table-auto">
-                <thead>
-                    <tr className="bg-slate-100 text-slate-600 text-sm font-semibold uppercase tracking-wider rounded-lg">
-                        <th className="py-3 px-4 rounded-l-lg">الاسم (عربي)</th>
-                        <th className="py-3 px-4">الاسم (إنجليزي)</th>
-                        <th className="py-3 px-4 rounded-r-lg">الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categories.map(category => (
-                        <tr key={category.id} className="border-b border-gray-200 last:border-b-0 text-slate-700">
-                            <td className="py-3 px-4 font-medium">{category.name_ar}</td>
-                            <td className="py-3 px-4">{category.name}</td>
-                            <td className="py-3 px-4">
-                                <button onClick={() => onEditCategory(category.id)} className="flex items-center gap-1 text-slate-700 hover:text-slate-900 transition-colors">
-                                    <Edit size={16} />
-                                    <span>تعديل</span>
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+const AddProduct = ({ onNavigate, onSave, categories, onGenerateDescription }) => {
+    const [formData, setFormData] = useState({
+        id: `p${Date.now()}`,
+        name: '',
+        name_ar: '',
+        categoryId: '',
+        description: '',
+        description_ar: '',
+        price: '',
+        imageUrl: '',
+        rating: 5.0,
+        sales: 0,
+    });
+    const [previewUrl, setPreviewUrl] = useState('');
+    const [generating, setGenerating] = useState(false);
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
+            setFormData(prev => ({ ...prev, imageUrl: url }));
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = () => {
+        onSave(formData);
+        onNavigate('productManagement');
+    };
+
+    const handleGenerate = async () => {
+        setGenerating(true);
+        const newDescription = await onGenerateDescription(formData.name_ar, formData.categoryId);
+        setFormData(prev => ({ ...prev, description_ar: newDescription }));
+        setGenerating(false);
+    };
+
+    return (
+        <div className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 min-h-screen text-right">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">إضافة منتج جديد</h1>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-slate-700 font-medium mb-1">الاسم (إنجليزي)</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-slate-700 font-medium mb-1">الاسم (عربي)</label>
+                        <input
+                            type="text"
+                            name="name_ar"
+                            value={formData.name_ar}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-right"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-slate-700 font-medium mb-1">الفئة</label>
+                        <select
+                            name="categoryId"
+                            value={formData.categoryId}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-right"
+                        >
+                            <option value="">اختر فئة</option>
+                            {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name_ar}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-slate-700 font-medium mb-1">السعر ($)</label>
+                        <input
+                            type="number"
+                            name="price"
+                            value={formData.price}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+                        />
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="block text-slate-700 font-medium">الوصف (عربي)</label>
+                          <button
+                            type="button"
+                            onClick={handleGenerate}
+                            className="flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors"
+                            disabled={generating}
+                          >
+                            <Sparkles size={16} />
+                            <span>{generating ? 'جاري الإنشاء...' : 'إنشاء تلقائي'}</span>
+                          </button>
+                        </div>
+                        <textarea
+                            name="description_ar"
+                            value={formData.description_ar}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-right"
+                            rows="4"
+                        ></textarea>
+                    </div>
+                     <div className="col-span-1 md:col-span-2">
+                        <label className="block text-slate-700 font-medium mb-1">الوصف (إنجليزي)</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+                            rows="4"
+                        ></textarea>
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                        <label className="block text-slate-700 font-medium mb-1">صورة المنتج</label>
+                        <input
+                            type="file"
+                            onChange={handleImageUpload}
+                            className="w-full text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer"
+                        />
+                        {previewUrl && (
+                            <div className="mt-4">
+                                <p className="text-sm text-slate-500 mb-2">معاينة الصورة:</p>
+                                <img src={previewUrl} alt="Product Preview" className="w-48 h-auto rounded-lg shadow-md border" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="flex justify-end gap-4 mt-8">
+                    <button onClick={() => onNavigate('productManagement')} className="bg-slate-100 text-slate-700 py-3 px-6 rounded-full font-semibold hover:bg-slate-200 transition-colors">
+                        إلغاء
+                    </button>
+                    <button onClick={handleSave} className="bg-slate-800 text-white py-3 px-6 rounded-full font-semibold hover:bg-slate-700 transition-colors flex items-center gap-2">
+                        <Save size={20} />
+                        <span>حفظ المنتج</span>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const EditProduct = ({ product, onNavigate, onSave, onGenerateDescription }) => {
     const [formData, setFormData] = useState(product);
@@ -1276,6 +1406,109 @@ const EditProduct = ({ product, onNavigate, onSave, onGenerateDescription }) => 
         </div>
     );
 };
+
+const CategoryManagement = ({ categories, onNavigate, onEditCategory, onDeleteCategory, onAddCategory }) => (
+    <div className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 min-h-screen text-right">
+        <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-800">إدارة الفئات</h1>
+            <button onClick={() => onNavigate('addCategory')} className="flex items-center gap-2 bg-green-500 text-white py-2 px-4 rounded-full font-semibold hover:bg-green-600 transition-colors">
+                <Plus size={20} />
+                <span>إضافة فئة جديدة</span>
+            </button>
+        </div>
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-x-auto">
+            <table className="min-w-full text-right table-auto">
+                <thead>
+                    <tr className="bg-slate-100 text-slate-600 text-sm font-semibold uppercase tracking-wider rounded-lg">
+                        <th className="py-3 px-4 rounded-l-lg">الاسم (عربي)</th>
+                        <th className="py-3 px-4">الاسم (إنجليزي)</th>
+                        <th className="py-3 px-4 rounded-r-lg">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {categories.map(category => (
+                        <tr key={category.id} className="border-b border-gray-200 last:border-b-0 text-slate-700">
+                            <td className="py-3 px-4 font-medium">{category.name_ar}</td>
+                            <td className="py-3 px-4">{category.name}</td>
+                            <td className="py-3 px-4 flex items-center gap-2">
+                                <button onClick={() => onEditCategory(category.id)} className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors">
+                                    <Edit size={16} />
+                                    <span>تعديل</span>
+                                </button>
+                                <button onClick={() => onDeleteCategory(category.id)} className="flex items-center gap-1 text-red-600 hover:text-red-800 transition-colors">
+                                    <Trash2 size={16} />
+                                    <span>حذف</span>
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    </div>
+);
+
+const AddCategory = ({ onNavigate, onSave }) => {
+    const [formData, setFormData] = useState({
+        id: `c${Date.now()}`,
+        name: '',
+        name_ar: '',
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = () => {
+        if (!formData.name || !formData.name_ar) {
+            alert('الرجاء إدخال الاسم باللغتين.');
+            return;
+        }
+        onSave(formData);
+        onNavigate('categoryManagement');
+    };
+
+    return (
+        <div className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 min-h-screen text-right">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">إضافة فئة جديدة</h1>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-slate-700 font-medium mb-1">الاسم (إنجليزي)</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-slate-700 font-medium mb-1">الاسم (عربي)</label>
+                        <input
+                            type="text"
+                            name="name_ar"
+                            value={formData.name_ar}
+                            onChange={handleChange}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-right"
+                        />
+                    </div>
+                </div>
+                <div className="flex justify-end gap-4 mt-8">
+                    <button onClick={() => onNavigate('categoryManagement')} className="bg-slate-100 text-slate-700 py-3 px-6 rounded-full font-semibold hover:bg-slate-200 transition-colors">
+                        إلغاء
+                    </button>
+                    <button onClick={handleSave} className="bg-slate-800 text-white py-3 px-6 rounded-full font-semibold hover:bg-slate-700 transition-colors flex items-center gap-2">
+                        <Save size={20} />
+                        <span>حفظ الفئة</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 const EditCategory = ({ category, onNavigate, onSave }) => {
     const [formData, setFormData] = useState(category);
@@ -1500,12 +1733,29 @@ function App() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleAddProduct = (newProduct) => {
+    setProductsData(prevProducts => [...prevProducts, newProduct]);
+  };
+
+  const handleDeleteProduct = (productId) => {
+    setProductsData(prevProducts => prevProducts.filter(p => p.id !== productId));
+  };
+  
   const handleSaveProduct = (updatedProduct) => {
     setProductsData(prevProducts =>
         prevProducts.map(p => p.id === updatedProduct.id ? updatedProduct : p)
     );
   };
     
+  const handleAddCategory = (newCategory) => {
+    setCategoriesData(prevCategories => [...prevCategories, newCategory]);
+  };
+  
+  const handleDeleteCategory = (categoryId) => {
+      setCategoriesData(prevCategories => prevCategories.filter(c => c.id !== categoryId));
+      setProductsData(prevProducts => prevProducts.map(p => p.categoryId === categoryId ? { ...p, categoryId: null } : p));
+  };
+  
   const handleSaveCategory = (updatedCategory) => {
     setCategoriesData(prevCategories =>
         prevCategories.map(c => c.id === updatedCategory.id ? updatedCategory : c)
@@ -1663,13 +1913,19 @@ function App() {
       content = isLoggedIn ? <SalesDashboard onLogout={() => setIsLoggedIn(false)} onNavigate={navigate} products={productsData} pendingPayments={pendingPayments} onApprovePayment={handleApprovePayment} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
       break;
     case 'productManagement':
-        content = isLoggedIn ? <ProductManagement products={productsData} onNavigate={navigate} onEditProduct={(id) => navigate('editProduct', { productId: id })} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
+        content = isLoggedIn ? <ProductManagement products={productsData} onNavigate={navigate} onEditProduct={(id) => navigate('editProduct', { productId: id })} onDeleteProduct={handleDeleteProduct} onAddProduct={handleAddProduct} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
+        break;
+    case 'addProduct':
+        content = isLoggedIn ? <AddProduct onNavigate={navigate} onSave={handleAddProduct} categories={categoriesData} onGenerateDescription={generateGeminiDescription} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
         break;
     case 'categoryManagement':
         content = isLoggedIn ? <CategoryManagement categories={categoriesData} onNavigate={navigate} onEditCategory={(id) => {
           setCategoryId(id);
           setView('editCategory');
-        }} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
+        }} onDeleteCategory={handleDeleteCategory} onAddCategory={handleAddCategory} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
+        break;
+    case 'addCategory':
+        content = isLoggedIn ? <AddCategory onNavigate={navigate} onSave={handleAddCategory} /> : <Login onLogin={setIsLoggedIn} onNavigate={navigate} />;
         break;
     case 'editProduct':
         const productToEdit = productsData.find(p => p.id === productId);
