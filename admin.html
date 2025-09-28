@@ -2,46 +2,35 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة الأدمن</title>
+  <title>متجر Hi-Tech</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <h1 class="text-2xl font-bold mb-4">لوحة تحكم الأدمن</h1>
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-  <!-- إضافة فئة -->
-  <div class="bg-white p-4 rounded shadow mb-6">
-    <h2 class="font-semibold mb-3">إضافة فئة</h2>
-    <form id="categoryForm" class="flex gap-2">
-      <input id="categoryName" type="text" placeholder="اسم الفئة" class="p-2 border rounded flex-1" required>
-      <button type="submit" class="bg-green-600 text-white px-4 rounded hover:bg-green-700">إضافة</button>
-    </form>
-  </div>
-
-  <!-- إضافة منتج -->
-  <div class="bg-white p-4 rounded shadow mb-6">
-    <h2 class="font-semibold mb-3">إضافة منتج</h2>
-    <form id="productForm" class="grid gap-2">
-      <input id="productName" type="text" placeholder="اسم المنتج" class="p-2 border rounded" required>
-      <input id="productPrice" type="number" placeholder="السعر" class="p-2 border rounded" required>
-      <input id="productImage" type="text" placeholder="رابط الصورة" class="p-2 border rounded" required>
-      <select id="productCategory" class="p-2 border rounded"></select>
-      <button type="submit" class="bg-blue-600 text-white px-4 rounded hover:bg-blue-700">إضافة</button>
-    </form>
-  </div>
-
-  <!-- عرض الفئات والمنتجات -->
-  <div class="grid grid-cols-2 gap-6">
-    <div>
-      <h2 class="font-semibold mb-2">الفئات</h2>
-      <ul id="categoriesList" class="bg-white p-4 rounded shadow"></ul>
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white shadow">
+    <div class="container mx-auto flex justify-between items-center py-4 px-6">
+      <h1 class="text-3xl font-bold">متجر Hi-Tech</h1>
+      <nav class="space-x-4 space-x-reverse">
+        <a href="login.html" class="hover:underline">تسجيل دخول</a>
+        <a href="admin-login.html" class="hover:underline">لوحة الأدمن</a>
+      </nav>
     </div>
-    <div>
-      <h2 class="font-semibold mb-2">المنتجات</h2>
-      <ul id="productsList" class="bg-white p-4 rounded shadow"></ul>
-    </div>
-  </div>
+  </header>
 
-  <script type="module" src="js/admin.js"></script>
+  <!-- Main -->
+  <main class="container mx-auto py-10 px-6">
+    <h2 class="text-2xl font-bold mb-6 text-center">منتجاتنا</h2>
+    <div id="productsContainer" class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-200 py-6 mt-10">
+    <div class="container mx-auto text-center">
+      <p>© 2025 متجر Hi-Tech. جميع الحقوق محفوظة.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/store.js"></script>
 </body>
 </html>
