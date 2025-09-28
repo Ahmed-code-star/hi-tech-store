@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل دخول العميل</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-6 rounded shadow w-96">
+    <h1 class="text-2xl font-bold mb-6 text-center">تسجيل / دخول العميل</h1>
+    
+    <!-- تسجيل حساب جديد -->
+    <form id="signupForm" class="space-y-3 mb-6">
+      <input id="signupName" type="text" placeholder="الاسم بالكامل"
+        class="w-full p-2 border rounded" required>
+      <input id="signupPhone" type="text" placeholder="رقم الهاتف"
+        class="w-full p-2 border rounded" required>
+      <input id="signupAddress" type="text" placeholder="العنوان"
+        class="w-full p-2 border rounded" required>
+      <input id="signupEmail" type="email" placeholder="البريد الإلكتروني"
+        class="w-full p-2 border rounded" required>
+      <input id="signupPassword" type="password" placeholder="كلمة السر"
+        class="w-full p-2 border rounded" required>
+      <button type="submit"
+        class="bg-green-600 text-white px-4 py-2 rounded w-full hover:bg-green-700">
+        إنشاء حساب
+      </button>
+    </form>
+
+    <!-- تسجيل دخول -->
+    <form id="loginForm" class="space-y-3">
+      <input id="loginEmail" type="email" placeholder="البريد الإلكتروني"
+        class="w-full p-2 border rounded" required>
+      <input id="loginPassword" type="password" placeholder="كلمة السر"
+        class="w-full p-2 border rounded" required>
+      <button type="submit"
+        class="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700">
+        دخول
+      </button>
+    </form>
+
+    <p id="error" class="text-red-600 mt-3 text-center hidden"></p>
+  </div>
+
+  <script type="module" src="js/customer-auth.js"></script>
+</body>
+</html>
