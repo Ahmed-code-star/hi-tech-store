@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>اتمام الطلب</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-6 rounded shadow w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4">إتمام الطلب</h2>
+    <form id="checkoutForm" class="space-y-3">
+      <input id="buyerName" placeholder="الاسم الكامل" class="w-full p-2 border rounded"/>
+      <input id="buyerPhone" placeholder="رقم الهاتف" class="w-full p-2 border rounded"/>
+      <input id="buyerAddress" placeholder="العنوان" class="w-full p-2 border rounded"/>
+      <select id="paymentMethod" class="w-full p-2 border rounded">
+        <option value="">اختر طريقة الدفع</option>
+        <option value="vodafone">فودafone كاش</option>
+        <option value="instapay">InstaPay</option>
+      </select>
+      <input id="buyerPaymentNumber" placeholder="رقم المحفظة/الحساب" class="w-full p-2 border rounded"/>
+      <button class="w-full bg-green-600 text-white p-2 rounded">ارسال الطلب</button>
+    </form>
+  </div>
+
+  <script type="module" src="js/checkout.js"></script>
+</body>
+</html>
