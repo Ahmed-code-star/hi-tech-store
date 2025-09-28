@@ -1,27 +1,33 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// js/checkout.js
+import { db } from "./firebase.js";
+import { collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAY4KAjhd4ULV85XorgUXDKtW748Jo_Ju8",
-  authDomain: "hi-tech-caeab.firebaseapp.com",
-  projectId: "hi-tech-caeab",
-  storageBucket: "hi-tech-caeab.appspot.com",
-  messagingSenderId: "493997466961",
-  appId: "1:493997466961:web:4aa242a63f03ff71441f70",
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// حفظ الطلب
-const checkoutForm = document.getElementById("checkoutForm");
-if (checkoutForm) {
-  checkoutForm.addEventListener("submit", async (e) => {
+const form = document.getElementById("checkoutForm");
+if (form) {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const phone = document.getElementById("customerPhone").value;
+    const name = document.getElementById("buyerName").value.trim();
+    const phone = document.getElementById("buyerPhone").value.trim();
+    const address = document.getElementById("buyerAddress").value.trim();
     const method = document.getElementById("paymentMethod").value;
+    const customerPaymentNumber = document.getElementById("buyerPaymentNumber").value.trim();
 
-    await addDoc(collection(db, "orders"), { phone, method, date: new Date() });
-    alert("تم إرسال الطلب بنجاح");
+    if (!name || !phone || !address || !method || !customerPaymentNumber) return alert("اكمل الحقول");
+
+    // جلب رقم التحويل المحفوظ في settings/payments.transferNumber لو متاح
+    let transferToNumber = "01025380065";
+    try {
+      const sRef = doc(db, "settings", "payments");
+      const sSnap = await getDoc(sRef);
+      if (sSnap.exists()) transferToNumber = sSnap.data().transferNumber || transferToNumber;
+    } catch (e) {}
+
+    await addDoc(collection(db, "orders"), {
+      name, phone, address, method, customerPaymentNumber, transferToNumber,
+      status: "pending", createdAt: new Date()
+    });
+
+    alert("تم ارسال الطلب. سيتم التواصل معك");
     window.location.href = "index.html";
   });
 }
