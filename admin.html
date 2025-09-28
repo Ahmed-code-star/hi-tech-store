@@ -3,51 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة تحكم الأدمن</title>
+  <title>لوحة الأدمن</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <div class="container mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">لوحة تحكم الأدمن</h1>
+<body class="bg-gray-100 p-6">
+  <h1 class="text-2xl font-bold mb-4">لوحة تحكم الأدمن</h1>
 
-    <!-- إضافة فئة -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">إضافة فئة</h2>
-      <form id="addCategoryForm" class="space-y-3">
-        <input id="categoryName" type="text" placeholder="اسم الفئة"
-          class="w-full p-2 border rounded" required>
-        <button type="submit"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">إضافة</button>
-      </form>
+  <!-- إضافة فئة -->
+  <div class="bg-white p-4 rounded shadow mb-6">
+    <h2 class="font-semibold mb-3">إضافة فئة</h2>
+    <form id="categoryForm" class="flex gap-2">
+      <input id="categoryName" type="text" placeholder="اسم الفئة" class="p-2 border rounded flex-1" required>
+      <button type="submit" class="bg-green-600 text-white px-4 rounded hover:bg-green-700">إضافة</button>
+    </form>
+  </div>
+
+  <!-- إضافة منتج -->
+  <div class="bg-white p-4 rounded shadow mb-6">
+    <h2 class="font-semibold mb-3">إضافة منتج</h2>
+    <form id="productForm" class="grid gap-2">
+      <input id="productName" type="text" placeholder="اسم المنتج" class="p-2 border rounded" required>
+      <input id="productPrice" type="number" placeholder="السعر" class="p-2 border rounded" required>
+      <input id="productImage" type="text" placeholder="رابط الصورة" class="p-2 border rounded" required>
+      <select id="productCategory" class="p-2 border rounded"></select>
+      <button type="submit" class="bg-blue-600 text-white px-4 rounded hover:bg-blue-700">إضافة</button>
+    </form>
+  </div>
+
+  <!-- عرض الفئات والمنتجات -->
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <h2 class="font-semibold mb-2">الفئات</h2>
+      <ul id="categoriesList" class="bg-white p-4 rounded shadow"></ul>
     </div>
-
-    <!-- عرض الفئات -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">الفئات</h2>
-      <div id="categories" class="space-y-3"></div>
-    </div>
-
-    <!-- إضافة منتج -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">إضافة منتج</h2>
-      <form id="addProductForm" class="space-y-3">
-        <input id="title" type="text" placeholder="اسم المنتج"
-          class="w-full p-2 border rounded" required>
-        <input id="category" type="text" placeholder="الفئة"
-          class="w-full p-2 border rounded" required>
-        <input id="price" type="number" placeholder="السعر"
-          class="w-full p-2 border rounded" required>
-        <input id="imageUrl" type="url" placeholder="رابط الصورة"
-          class="w-full p-2 border rounded" required>
-        <button type="submit"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">إضافة</button>
-      </form>
-    </div>
-
-    <!-- عرض المنتجات -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">المنتجات</h2>
-      <div id="products" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+    <div>
+      <h2 class="font-semibold mb-2">المنتجات</h2>
+      <ul id="productsList" class="bg-white p-4 rounded shadow"></ul>
     </div>
   </div>
 
