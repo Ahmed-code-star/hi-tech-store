@@ -2,21 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل الأدمن</title>
+  <title>تسجيل الدخول - العملاء</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="bg-white p-6 rounded shadow w-96">
-    <h1 class="text-2xl font-bold mb-6 text-center">تسجيل الأدمن</h1>
+<body class="bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center min-h-screen">
 
-    <form id="adminLoginForm" class="space-y-3">
-      <input id="adminEmail" type="email" placeholder="البريد الإلكتروني" class="w-full p-2 border rounded" required>
-      <input id="adminPassword" type="password" placeholder="كلمة السر" class="w-full p-2 border rounded" required>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700">دخول</button>
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">تسجيل دخول العملاء</h2>
+
+    <form id="clientLoginForm" class="mb-8 space-y-4">
+      <input type="email" id="clientLoginEmail" placeholder="البريد الإلكتروني" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+      <input type="password" id="clientLoginPassword" placeholder="كلمة المرور" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">دخول</button>
     </form>
 
-    <p id="error" class="text-red-600 mt-3 text-center hidden"></p>
+    <div class="text-center mb-4 text-gray-600">أو إنشاء حساب جديد</div>
+
+    <form id="clientRegisterForm" class="space-y-4">
+      <input type="email" id="clientEmail" placeholder="البريد الإلكتروني" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500" required>
+      <input type="password" id="clientPassword" placeholder="كلمة المرور" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500" required>
+      <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">تسجيل جديد</button>
+    </form>
   </div>
 
   <script type="module" src="js/auth.js"></script>
