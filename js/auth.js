@@ -1,59 +1,39 @@
-// auth.js
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { app } from "./firebase.js";
+// js/auth.js
+import { auth, db } from "./firebase.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const auth = getAuth(app);
-
-// تسجيل الأدمن
-const adminLoginForm = document.getElementById("adminLoginForm");
-if (adminLoginForm) {
-  adminLoginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("adminEmail").value;
-    const password = document.getElementById("adminPassword").value;
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      alert("تم تسجيل الدخول كأدمن");
-      window.location.href = "admin.html";
-    } catch (error) {
-      alert("خطأ: " + error.message);
-    }
-  });
-}
-
-// تسجيل عميل جديد
 const clientRegisterForm = document.getElementById("clientRegisterForm");
 if (clientRegisterForm) {
   clientRegisterForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("clientEmail").value;
+    const name = document.getElementById("clientName").value.trim();
+    const phone = document.getElementById("clientPhone").value.trim();
+    const address = document.getElementById("clientAddress").value.trim();
+    const email = document.getElementById("clientEmail").value.trim();
     const password = document.getElementById("clientPassword").value;
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("تم إنشاء الحساب بنجاح");
+      const uc = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "customers", uc.user.uid), { name, phone, address, email, createdAt: new Date() });
       window.location.href = "index.html";
-    } catch (error) {
-      alert("خطأ: " + error.message);
+    } catch (err) {
+      alert(err.message);
     }
   });
 }
 
-// تسجيل دخول العميل
 const clientLoginForm = document.getElementById("clientLoginForm");
 if (clientLoginForm) {
   clientLoginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("clientLoginEmail").value;
+    const email = document.getElementById("clientLoginEmail").value.trim();
     const password = document.getElementById("clientLoginPassword").value;
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      alert("تم تسجيل الدخول");
       window.location.href = "index.html";
-    } catch (error) {
-      alert("خطأ: " + error.message);
+    } catch (err) {
+      alert(err.message);
     }
   });
 }
