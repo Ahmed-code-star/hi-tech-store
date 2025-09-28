@@ -1,49 +1,45 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>متجر هاي تك</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hi-Tech Store</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gray-50 font-sans">
-
-  <!-- هيدر -->
-  <header class="bg-blue-700 text-white shadow">
-    <div class="container mx-auto flex justify-between items-center py-4 px-6">
-      <h1 class="text-2xl font-bold">متجر هاي تك</h1>
-      <nav class="space-x-4 space-x-reverse">
-        <a href="customer-login.html" class="bg-green-500 px-3 py-1 rounded hover:bg-green-600">تسجيل دخول</a>
-        <a href="checkout.html" class="bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600">طلباتي</a>
-      </nav>
+<body class="bg-gray-50 text-gray-800">
+  <header class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white">
+    <div class="container mx-auto flex items-center justify-between p-4">
+      <div class="flex items-center gap-4">
+        <div class="text-2xl font-bold">Hi-Tech</div>
+        <div class="hidden md:flex gap-3">
+          <a href="customer-login.html" class="text-sm">دخول / تسجيل</a>
+          <a href="admin-login.html" class="text-sm">لوحة الأدمن</a>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <input id="searchBar" placeholder="ابحث عن منتج..." class="px-3 py-2 rounded-lg w-64"/>
+        <a href="checkout.html" class="bg-yellow-400 text-black px-4 py-2 rounded-lg">السلة</a>
+      </div>
     </div>
   </header>
 
-  <!-- بانر -->
-  <section class="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-16">
-    <h2 class="text-4xl font-bold mb-4">أفضل منتجات التقنية بين يديك</h2>
-    <p class="text-lg mb-6">تسوق الآن بأمان وطرق دفع سهلة</p>
-    <a href="#products" class="bg-white text-blue-700 px-6 py-2 rounded font-semibold hover:bg-gray-200">ابدأ التسوق</a>
-  </section>
+  <main class="container mx-auto p-6">
+    <section class="mb-8 text-center">
+      <h1 class="text-4xl font-bold mb-2">أفضل أجهزة التقنية</h1>
+      <p class="text-gray-600">منتجات مختارة. دفع محلي. توصيل سريع.</p>
+    </section>
 
-  <!-- شريط بحث -->
-  <section class="container mx-auto px-6 py-6">
-    <input id="searchBar" type="text" placeholder="ابحث عن منتج..."
-      class="w-full p-3 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
-  </section>
-
-  <!-- المنتجات -->
-  <main class="container mx-auto px-6 py-8">
-    <h2 class="text-2xl font-semibold mb-6">المنتجات</h2>
-    <div id="products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <section id="productsSection" class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></section>
   </main>
 
-  <!-- فوتر -->
-  <footer class="bg-blue-700 text-white text-center py-6 mt-12">
-    <p>© 2025 متجر هاي تك</p>
-    <p>للتواصل: 01025380065</p>
+  <footer class="bg-gray-800 text-gray-200 py-6">
+    <div class="container mx-auto text-center">
+      <p>© 2025 Hi-Tech</p>
+      <p>التواصل: 01025380065</p>
+    </div>
   </footer>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/store.js"></script>
 </body>
 </html>
