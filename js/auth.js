@@ -1,56 +1,34 @@
-// js/auth.js
-import { auth, db } from "./firebase.js";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
-// register
-const registerForm = document.getElementById("registerForm");
-if (registerForm) {
-  registerForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const phone = document.getElementById("phone").value.trim();
+// إعداد Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAY4KAjhd4ULV85XorgUXDKtW748Jo_Ju8",
+  authDomain: "hi-tech-caeab.firebaseapp.com",
+  projectId: "hi-tech-caeab",
+  storageBucket: "hi-tech-caeab.appspot.com",
+  messagingSenderId: "493997466961",
+  appId: "1:493997466961:web:4aa242a63f03ff71441f70",
+  measurementId: "G-M68F8YSY52"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-    try {
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "users", userCred.user.uid), {
-        name,
-        email,
-        phone,
-        createdAt: new Date()
-      });
-      alert("تم التسجيل");
-      window.location.href = "login.html";
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-
-// login
+// تسجيل الدخول
 const loginForm = document.getElementById("loginForm");
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("تم الدخول");
-      window.location.href = "products.html";
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      window.location.href = "admin.html";
+    })
+    .catch((error) => {
+      document.getElementById("error").textContent = "خطأ في تسجيل الدخول";
+      document.getElementById("error").classList.remove("hidden");
+      console.error(error);
+    });
+});
