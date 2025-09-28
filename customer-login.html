@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تسجيل العميل</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gradient-to-r from-blue-600 to-indigo-700 min-h-screen flex items-center justify-center">
+  <div class="bg-white rounded-2xl p-8 shadow-xl w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-4">حساب العميل</h2>
+
+    <form id="clientRegisterForm" class="space-y-3 mb-6">
+      <input id="clientName" placeholder="الاسم الكامل" class="w-full p-3 border rounded-lg"/>
+      <input id="clientPhone" placeholder="رقم الهاتف" class="w-full p-3 border rounded-lg"/>
+      <input id="clientAddress" placeholder="العنوان" class="w-full p-3 border rounded-lg"/>
+      <input id="clientEmail" type="email" placeholder="البريد الإلكتروني" class="w-full p-3 border rounded-lg"/>
+      <input id="clientPassword" type="password" placeholder="كلمة المرور" class="w-full p-3 border rounded-lg"/>
+      <button class="w-full bg-green-600 text-white py-3 rounded-lg" type="submit">إنشاء حساب</button>
+    </form>
+
+    <hr class="my-4"/>
+    <form id="clientLoginForm" class="space-y-3">
+      <input id="clientLoginEmail" type="email" placeholder="البريد الإلكتروني" class="w-full p-3 border rounded-lg"/>
+      <input id="clientLoginPassword" type="password" placeholder="كلمة المرور" class="w-full p-3 border rounded-lg"/>
+      <button class="w-full bg-blue-600 text-white py-3 rounded-lg" type="submit">دخول</button>
+    </form>
+  </div>
+
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>
