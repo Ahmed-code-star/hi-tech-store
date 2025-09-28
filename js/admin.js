@@ -1,140 +1,94 @@
-import { db } from "./firebase.js";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-// --- إضافة منتج ---
-const addProductForm = document.getElementById("addProductForm");
-const productsContainer = document.getElementById("products");
+// إعداد Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAY4KAjhd4ULV85XorgUXDKtW748Jo_Ju8",
+  authDomain: "hi-tech-caeab.firebaseapp.com",
+  projectId: "hi-tech-caeab",
+  storageBucket: "hi-tech-caeab.appspot.com",
+  messagingSenderId: "493997466961",
+  appId: "1:493997466961:web:4aa242a63f03ff71441f70",
+  measurementId: "G-M68F8YSY52"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-if (addProductForm) {
-  addProductForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const title = document.getElementById("title").value;
-    const category = document.getElementById("category").value;
-    const price = document.getElementById("price").value;
-    const imageUrl = document.getElementById("imageUrl").value;
-
-    try {
-      await addDoc(collection(db, "products"), {
-        title,
-        category,
-        price,
-        imageUrl
-      });
-      alert("تمت إضافة المنتج بنجاح");
-      addProductForm.reset();
-      loadProducts();
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-}
-
-// --- تحميل وعرض المنتجات ---
-async function loadProducts() {
-  const querySnapshot = await getDocs(collection(db, "products"));
-  productsContainer.innerHTML = "";
-  querySnapshot.forEach((d) => {
-    const product = d.data();
-    const div = document.createElement("div");
-    div.className = "product-card";
-    div.innerHTML = `
-      <img src="${product.imageUrl}" alt="${product.title}">
-      <h3>${product.title}</h3>
-      <p>الفئة: ${product.category}</p>
-      <p>${product.price} ج.م</p>
-      <button onclick="editProduct('${d.id}','${product.title}','${product.category}','${product.price}','${product.imageUrl}')">تعديل</button>
-      <button onclick="deleteProduct('${d.id}')">حذف</button>
-    `;
-    productsContainer.appendChild(div);
-  });
-}
-
-window.deleteProduct = async (id) => {
-  if (confirm("هل تريد حذف هذا المنتج؟")) {
-    await deleteDoc(doc(db, "products", id));
-    alert("تم الحذف بنجاح");
-    loadProducts();
+// تحقق من تسجيل الأدمن
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
   }
-};
+});
 
-window.editProduct = async (id, oldTitle, oldCategory, oldPrice, oldImage) => {
-  const title = prompt("اسم المنتج:", oldTitle);
-  const category = prompt("الفئة:", oldCategory);
-  const price = prompt("السعر:", oldPrice);
-  const imageUrl = prompt("رابط الصورة:", oldImage);
-
-  if (!title || !category || !price || !imageUrl) return;
-
-  await updateDoc(doc(db, "products", id), {
-    title,
-    category,
-    price,
-    imageUrl
-  });
-
-  alert("تم تعديل المنتج");
-  loadProducts();
-};
-
-// --- إضافة فئة ---
+// إضافة فئة
 const addCategoryForm = document.getElementById("addCategoryForm");
-const categoriesContainer = document.getElementById("categories");
+addCategoryForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = document.getElementById("categoryName").value;
+  await addDoc(collection(db, "categories"), { name });
+  location.reload();
+});
 
-if (addCategoryForm) {
-  addCategoryForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = document.getElementById("categoryName").value;
-    try {
-      await addDoc(collection(db, "categories"), { name });
-      alert("تمت إضافة الفئة");
-      addCategoryForm.reset();
-      loadCategories();
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-}
-
-// --- تحميل وعرض الفئات ---
+// عرض الفئات
 async function loadCategories() {
   const querySnapshot = await getDocs(collection(db, "categories"));
-  categoriesContainer.innerHTML = "";
-  querySnapshot.forEach((d) => {
-    const category = d.data();
+  const container = document.getElementById("categories");
+  container.innerHTML = "";
+  querySnapshot.forEach((docSnap) => {
     const div = document.createElement("div");
-    div.className = "category-card";
+    div.className = "flex justify-between items-center p-2 border rounded";
     div.innerHTML = `
-      <p>${category.name}</p>
-      <button onclick="editCategory('${d.id}','${category.name}')">تعديل</button>
-      <button onclick="deleteCategory('${d.id}')">حذف</button>
+      <span>${docSnap.data().name}</span>
+      <button class="bg-red-600 text-white px-2 py-1 rounded"
+        onclick="deleteCategory('${docSnap.id}')">حذف</button>
     `;
-    categoriesContainer.appendChild(div);
+    container.appendChild(div);
   });
 }
-
 window.deleteCategory = async (id) => {
-  if (confirm("هل تريد حذف هذه الفئة؟")) {
-    await deleteDoc(doc(db, "categories", id));
-    alert("تم الحذف");
-    loadCategories();
-  }
+  await deleteDoc(doc(db, "categories", id));
+  location.reload();
 };
+loadCategories();
 
-window.editCategory = async (id, oldName) => {
-  const name = prompt("اسم الفئة:", oldName);
-  if (!name) return;
-  await updateDoc(doc(db, "categories", id), { name });
-  alert("تم تعديل الفئة");
-  loadCategories();
+// إضافة منتج
+const addProductForm = document.getElementById("addProductForm");
+addProductForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = document.getElementById("title").value;
+  const category = document.getElementById("category").value;
+  const price = document.getElementById("price").value;
+  const imageUrl = document.getElementById("imageUrl").value;
+
+  await addDoc(collection(db, "products"), { title, category, price, imageUrl });
+  location.reload();
+});
+
+// عرض المنتجات
+async function loadProducts() {
+  const querySnapshot = await getDocs(collection(db, "products"));
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    const div = document.createElement("div");
+    div.className = "border rounded p-3";
+    div.innerHTML = `
+      <img src="${data.imageUrl}" alt="${data.title}" class="w-full h-40 object-cover mb-2 rounded">
+      <h3 class="font-semibold">${data.title}</h3>
+      <p>الفئة: ${data.category}</p>
+      <p>السعر: ${data.price} جنيه</p>
+      <button class="bg-red-600 text-white px-2 py-1 rounded mt-2"
+        onclick="deleteProduct('${docSnap.id}')">حذف</button>
+    `;
+    container.appendChild(div);
+  });
+}
+window.deleteProduct = async (id) => {
+  await deleteDoc(doc(db, "products", id));
+  location.reload();
 };
-
-// --- تشغيل ---
-if (productsContainer) loadProducts();
-if (categoriesContainer) loadCategories();
+loadProducts();
