@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hi-Tech Store</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر هاي تك</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header class="navbar">
-    <div class="logo">Hi-Tech</div>
-    <nav class="nav-links">
-      <a href="index.html">الرئيسية</a>
-      <a href="products.html">المنتجات</a>
-      <a href="login.html">دخول</a>
-      <a href="register.html" class="btn">انشاء حساب</a>
-    </nav>
+<body class="bg-gray-50 font-sans">
+
+  <!-- هيدر -->
+  <header class="bg-blue-700 text-white shadow">
+    <div class="container mx-auto flex justify-between items-center py-4 px-6">
+      <h1 class="text-2xl font-bold">متجر هاي تك</h1>
+      <nav class="space-x-4 space-x-reverse">
+        <a href="customer-login.html" class="bg-green-500 px-3 py-1 rounded hover:bg-green-600">تسجيل دخول</a>
+        <a href="checkout.html" class="bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600">طلباتي</a>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <h1>مرحبا في Hi-Tech</h1>
-      <p>أحدث الأجهزة. طرق دفع محلية. طلبات تذهب للإدارة.</p>
-      <a class="btn big" href="products.html">تسوق الآن</a>
-    </section>
+  <!-- بانر -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-16">
+    <h2 class="text-4xl font-bold mb-4">أفضل منتجات التقنية بين يديك</h2>
+    <p class="text-lg mb-6">تسوق الآن بأمان وطرق دفع سهلة</p>
+    <a href="#products" class="bg-white text-blue-700 px-6 py-2 rounded font-semibold hover:bg-gray-200">ابدأ التسوق</a>
+  </section>
 
-    <section class="features">
-      <div class="card">
-        <h3>سلة طلب بسيطة</h3>
-        <p>اطلب برقم هاتفك وختر فودافون كاش أو انستا باي</p>
-      </div>
-      <div class="card">
-        <h3>لوحة مدير</h3>
-        <p>تتحكم في المنتجات والفئات ورقم التحويل</p>
-      </div>
-    </section>
+  <!-- شريط بحث -->
+  <section class="container mx-auto px-6 py-6">
+    <input id="searchBar" type="text" placeholder="ابحث عن منتج..."
+      class="w-full p-3 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
+  </section>
+
+  <!-- المنتجات -->
+  <main class="container mx-auto px-6 py-8">
+    <h2 class="text-2xl font-semibold mb-6">المنتجات</h2>
+    <div id="products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
   </main>
 
-  <footer class="footer">
-    <p>© Hi-Tech 2025</p>
+  <!-- فوتر -->
+  <footer class="bg-blue-700 text-white text-center py-6 mt-12">
+    <p>© 2025 متجر هاي تك</p>
+    <p>للتواصل: 01025380065</p>
   </footer>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
