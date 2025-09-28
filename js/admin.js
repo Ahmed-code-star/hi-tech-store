@@ -1,118 +1,140 @@
-// js/admin.js
-import { auth, db } from "./firebase.js";
+import { db } from "./firebase.js";
 import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateEmail,
-  updatePassword
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
   collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const adminLoginBtn = document.getElementById("adminLoginBtn");
-const adminPanel = document.getElementById("adminPanel");
-const loginBox = document.getElementById("loginBox");
-const transferNumberInput = document.getElementById("transferNumber");
-const saveTransferBtn = document.getElementById("saveTransfer");
-const updateAdminBtn = document.getElementById("updateAdmin");
-const ordersContainer = document.getElementById("orders");
-const logoutBtn = document.getElementById("logoutBtn");
+// --- إضافة منتج ---
+const addProductForm = document.getElementById("addProductForm");
+const productsContainer = document.getElementById("products");
 
-async function ensurePaymentsDoc() {
-  const ref = doc(db, "settings", "payments");
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    await setDoc(ref, { transferNumber: "01025380065" });
-    return "01025380065";
-  }
-  return snap.data().transferNumber || "01025380065";
-}
+if (addProductForm) {
+  addProductForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("title").value;
+    const category = document.getElementById("category").value;
+    const price = document.getElementById("price").value;
+    const imageUrl = document.getElementById("imageUrl").value;
 
-async function loadOrders() {
-  ordersContainer.innerHTML = "";
-  const q = await getDocs(collection(db, "orders"));
-  q.forEach(d => {
-    const o = d.data();
-    const el = document.createElement("div");
-    el.className = "order-card";
-    el.innerHTML = `
-      <p><b>الاسم</b> ${o.name}</p>
-      <p><b>هاتف</b> ${o.phone}</p>
-      <p><b>عنوان</b> ${o.address}</p>
-      <p><b>المنتج</b> ${o.productTitle}</p>
-      <p><b>السعر</b> ${o.price} ج.م</p>
-      <p><b>دفع</b> ${o.paymentMethod} - محفظة العميل ${o.customerPaymentNumber}</p>
-      <p><b>حول إلى</b> ${o.transferToNumber}</p>
-      <p><b>حالة</b> ${o.status}</p>
-    `;
-    ordersContainer.appendChild(el);
+    try {
+      await addDoc(collection(db, "products"), {
+        title,
+        category,
+        price,
+        imageUrl
+      });
+      alert("تمت إضافة المنتج بنجاح");
+      addProductForm.reset();
+      loadProducts();
+    } catch (error) {
+      alert(error.message);
+    }
   });
 }
 
-adminLoginBtn.addEventListener("click", async () => {
-  const email = document.getElementById("adminEmail").value.trim();
-  const password = document.getElementById("adminPassword").value;
+// --- تحميل وعرض المنتجات ---
+async function loadProducts() {
+  const querySnapshot = await getDocs(collection(db, "products"));
+  productsContainer.innerHTML = "";
+  querySnapshot.forEach((d) => {
+    const product = d.data();
+    const div = document.createElement("div");
+    div.className = "product-card";
+    div.innerHTML = `
+      <img src="${product.imageUrl}" alt="${product.title}">
+      <h3>${product.title}</h3>
+      <p>الفئة: ${product.category}</p>
+      <p>${product.price} ج.م</p>
+      <button onclick="editProduct('${d.id}','${product.title}','${product.category}','${product.price}','${product.imageUrl}')">تعديل</button>
+      <button onclick="deleteProduct('${d.id}')">حذف</button>
+    `;
+    productsContainer.appendChild(div);
+  });
+}
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    // if not found create account then sign in
-    if (err.code === "auth/user-not-found") {
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } catch (e) {
-        return alert(e.message);
-      }
-    } else {
-      return alert(err.message);
+window.deleteProduct = async (id) => {
+  if (confirm("هل تريد حذف هذا المنتج؟")) {
+    await deleteDoc(doc(db, "products", id));
+    alert("تم الحذف بنجاح");
+    loadProducts();
+  }
+};
+
+window.editProduct = async (id, oldTitle, oldCategory, oldPrice, oldImage) => {
+  const title = prompt("اسم المنتج:", oldTitle);
+  const category = prompt("الفئة:", oldCategory);
+  const price = prompt("السعر:", oldPrice);
+  const imageUrl = prompt("رابط الصورة:", oldImage);
+
+  if (!title || !category || !price || !imageUrl) return;
+
+  await updateDoc(doc(db, "products", id), {
+    title,
+    category,
+    price,
+    imageUrl
+  });
+
+  alert("تم تعديل المنتج");
+  loadProducts();
+};
+
+// --- إضافة فئة ---
+const addCategoryForm = document.getElementById("addCategoryForm");
+const categoriesContainer = document.getElementById("categories");
+
+if (addCategoryForm) {
+  addCategoryForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("categoryName").value;
+    try {
+      await addDoc(collection(db, "categories"), { name });
+      alert("تمت إضافة الفئة");
+      addCategoryForm.reset();
+      loadCategories();
+    } catch (error) {
+      alert(error.message);
     }
+  });
+}
+
+// --- تحميل وعرض الفئات ---
+async function loadCategories() {
+  const querySnapshot = await getDocs(collection(db, "categories"));
+  categoriesContainer.innerHTML = "";
+  querySnapshot.forEach((d) => {
+    const category = d.data();
+    const div = document.createElement("div");
+    div.className = "category-card";
+    div.innerHTML = `
+      <p>${category.name}</p>
+      <button onclick="editCategory('${d.id}','${category.name}')">تعديل</button>
+      <button onclick="deleteCategory('${d.id}')">حذف</button>
+    `;
+    categoriesContainer.appendChild(div);
+  });
+}
+
+window.deleteCategory = async (id) => {
+  if (confirm("هل تريد حذف هذه الفئة؟")) {
+    await deleteDoc(doc(db, "categories", id));
+    alert("تم الحذف");
+    loadCategories();
   }
+};
 
-  // show panel
-  loginBox.style.display = "none";
-  adminPanel.style.display = "block";
+window.editCategory = async (id, oldName) => {
+  const name = prompt("اسم الفئة:", oldName);
+  if (!name) return;
+  await updateDoc(doc(db, "categories", id), { name });
+  alert("تم تعديل الفئة");
+  loadCategories();
+};
 
-  // ensure settings doc
-  const num = await ensurePaymentsDoc();
-  transferNumberInput.value = num;
-
-  // load orders
-  await loadOrders();
-});
-
-saveTransferBtn.addEventListener("click", async () => {
-  const val = transferNumberInput.value.trim() || "01025380065";
-  const ref = doc(db, "settings", "payments");
-  try {
-    await setDoc(ref, { transferNumber: val }, { merge: true });
-    alert("تم حفظ رقم التحويل");
-  } catch (e) {
-    alert(e.message);
-  }
-});
-
-updateAdminBtn.addEventListener("click", async () => {
-  const newEmail = document.getElementById("newEmail").value.trim();
-  const newPassword = document.getElementById("newPassword").value;
-  try {
-    if (newEmail) await updateEmail(auth.currentUser, newEmail);
-    if (newPassword) await updatePassword(auth.currentUser, newPassword);
-    alert("تم تحديث بيانات الأدمن");
-  } catch (e) {
-    alert(e.message);
-  }
-});
-
-logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  adminPanel.style.display = "none";
-  loginBox.style.display = "block";
-  document.getElementById("adminPassword").value = "";
-});
+// --- تشغيل ---
+if (productsContainer) loadProducts();
+if (categoriesContainer) loadCategories();
